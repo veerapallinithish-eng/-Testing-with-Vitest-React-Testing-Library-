@@ -8,25 +8,39 @@ function readStoredValue<T>(key: string, initialValue: T): T {
   }
 
   const storedValue = window.localStorage.getItem(key)
-  return storedValue === null ? initialValue : (JSON.parse(storedValue) as T)
+  if (storedValue === null) {
+    return initialValue
+  }
+
+  try {
+    return JSON.parse(storedValue) as T
+  } catch {
+    return initialValue
+  }
 }
 
 export function useLocalStorage<T>(
   key: string,
   initialValue: T,
 ): [T, (value: SetValue<T>) => void] {
-  const [value, setValue] = useState(() => readStoredValue(key, initialValue))
+  const [value, setValue] = useState<T>(() => readStoredValue(key, initialValue))
 
   const updateValue = useCallback(
     (nextValue: SetValue<T>) => {
-      const resolvedValue =
-        typeof nextValue === 'function'
-          ? (nextValue as (currentValue: T) => T)(value)
-          : nextValue
-      window.localStorage.setItem(key, JSON.stringify(resolvedValue))
-      setValue(resolvedValue)
+      setValue((currentValue) => {
+        const resolvedValue =
+          typeof nextValue === 'function'
+            ? (nextValue as (currentValue: T) => T)(currentValue)
+            : nextValue
+
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem(key, JSON.stringify(resolvedValue))
+        }
+
+        return resolvedValue
+      })
     },
-    [key, value],
+    [key],
   )
 
   return [value, updateValue]
