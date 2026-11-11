@@ -1,0 +1,40 @@
+ Task 23 – Testing with Vitest & React Testing Library
+
+
+
+ 1. What is the difference between a unit test and an integration test?
+
+A unit test checks one small part of the code separately to make sure it works correctly. For example, in my `formatters.test.ts` file, I tested the `formatCurrency()` function with positive numbers, zero, and large numbers.
+
+An integration test checks whether different parts of an application work together correctly. For example, testing the ExpenseForm by entering expense details, clicking the submit button, and checking whether the correct data is passed to the `onAdd` function.
+
+
+
+
+ 2. What does vi.fn() do and why do you need it?
+
+`vi.fn()` creates a mock function in Vitest. It helps us check whether a function was called and what values were passed to it.
+
+In my ExpenseCard and ExpenseForm tests, I use mock functions to check whether the delete and add functions are called correctly. This allows me to test the component without using the actual application functions.
+
+
+
+
+3. Why must tests not make real API calls? How did you mock an API call?
+
+Tests should not make real API calls because they depend on the internet and server availability. This can make tests slow and unreliable.
+
+Mocking an API means creating a fake API response instead of sending a real request. In Vitest, we can use `vi.mock()` to mock the API module and `mockResolvedValueOnce()` to provide sample response data.
+
+This helps us test the application without depending on the actual backend.
+
+
+
+
+ 4. What does vi.useFakeTimers() do and why is it needed?
+
+`vi.useFakeTimers()` allows us to control timers in our tests instead of waiting for the actual time to pass.
+
+In my `useDebounce.test.ts` file, I use fake timers to test the 300ms debounce delay. Using `vi.advanceTimersByTime(300)`, I can move the timer forward by 300 milliseconds and check whether the value updates correctly.
+
+This makes the tests faster and helps us check the debounce functionality accurately.
